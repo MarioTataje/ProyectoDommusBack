@@ -1,0 +1,1 @@
+from .EmailVerificationToken import account_activation_token

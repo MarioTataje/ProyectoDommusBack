@@ -1,0 +1,9 @@
+# enviroments
+.env
+env/
+
+# Generated fiels
+files/
+
+# django
+db.sqlite3

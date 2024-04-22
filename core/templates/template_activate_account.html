@@ -1,0 +1,7 @@
+{% autoescape off %}
+Hi {{ usuario }},
+
+Please click on the link below to confirm your registration:
+
+{{ protocol }}://localhost:3000/sign-in/{{uid}}/{{token}}/
+{% endautoescape %}

@@ -1,2 +1,5 @@
-# ProyectoDommusBack
-Backend del proyecto Dommus
+[] Add perdiction personality API
+[] Add forgot password
+[] Add google API
+[] Add lifechat
+[] 
