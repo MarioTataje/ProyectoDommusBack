@@ -9,7 +9,7 @@ DEBUG = os.environ.get('DEBUG') == 'True'
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    #'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -17,7 +17,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'accounts.apps.AccountsConfig'
+    'accounts.apps.AccountsConfig',
+    'locations.apps.LocationsConfig'
 ]
 
 MIDDLEWARE = [
