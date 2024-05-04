@@ -17,7 +17,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'accounts.apps.AccountsConfig',
-    'locations.apps.LocationsConfig'
+    'locations.apps.LocationsConfig',
+    'studies.apps.StudiesConfig'
 ]
 
 MIDDLEWARE = [

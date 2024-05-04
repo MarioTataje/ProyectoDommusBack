@@ -21,7 +21,7 @@ def register_user(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def user_detail(request, user_id):
     try:
@@ -32,4 +32,10 @@ def user_detail(request, user_id):
     if request.method == 'GET':
         serializer = UserSerializer(user)
         return Response(serializer.data)
-
+    
+    elif request.method == 'PATCH':
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
