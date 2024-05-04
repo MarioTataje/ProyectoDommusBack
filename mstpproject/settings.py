@@ -4,12 +4,11 @@ import os
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'django-insecure-%x89x6$4slw%&=6g$w94!phj^bx5@@nzte=$j$q6^y)1*c&m!r'
 DEBUG = os.environ.get('DEBUG') == 'True'
-ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
-    #'django.contrib.admin',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -115,13 +114,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATIC_URL = '/files/'
 
-STATICFILES_DIRS = [ os.path.join(BASE_DIR, "files")]
-
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),"files")
-
-REST_FRAMEWORK = {
-    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
-}
 
 # EMAIL SETTINGS
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -134,7 +127,3 @@ EMAIL_USE_TLS = True
 
 PASSWORD_RESET_TIMEOUT = 14400
 
-AUTHENTICATION_BACKENDS = [
-    'users.authback.EmailBackend',
-    "django.contrib.auth.backends.ModelBackend",
-]

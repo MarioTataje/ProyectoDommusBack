@@ -4,9 +4,15 @@ from rest_framework.views import *
 
 from .serializers import UserSerializer
 from .models import User
+from locations.models import District
 
 @api_view(['POST'])
 def register_user(request):
+    try:
+        District.objects.get(id=request.data['district_id'])
+    except District.DoesNotExist:
+        raise Http404
+
     if request.method == 'POST':
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
