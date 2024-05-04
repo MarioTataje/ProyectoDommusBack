@@ -18,7 +18,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'accounts.apps.AccountsConfig',
     'locations.apps.LocationsConfig',
-    'studies.apps.StudiesConfig'
+    'studies.apps.StudiesConfig',
+    'socials.apps.SocialsConfig'
 ]
 
 MIDDLEWARE = [

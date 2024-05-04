@@ -19,7 +19,7 @@ def degrees_list(request, university_id):
         raise Http404
     
     if request.method == 'GET':
-        degrees = Degree.objects.all(universities__id=university_id)
+        degrees = Degree.objects.filter(universities__id=university_id)
         serializer = DegreeSerializer(degrees, many=True)
         return Response(serializer.data)
 

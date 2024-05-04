@@ -1,7 +1,4 @@
 from locations.models import Region, Province, District
-from accounts.models import User
-from django.contrib.auth.hashers import make_password
-
 
 def create_data(apps, schema_editor):
     regions = {'Lima': {'Lima': ['Lima', 'Jesus Maria', 'Pueblo Libre'],

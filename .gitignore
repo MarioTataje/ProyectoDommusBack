@@ -6,4 +6,4 @@ myenv/
 files/
 
 # django
-db.sqlite3
+*.pyc
