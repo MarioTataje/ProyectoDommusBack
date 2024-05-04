@@ -3,8 +3,22 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from locations.models import District
 from studies.models import Degree
-
 from .managers import UserManager
+
+
+class Personality(models.Model):
+    tag = models.CharField(max_length=10, blank=False, null=False)
+    mind = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=3)
+    energy = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=3)
+    nature = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=3)
+    tactics = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=3)
+    identity = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=3)
+    register_date = models.DateField(blank=False, null=False)
+    is_active = models.BooleanField('active', blank=False, null=False, default=True)
+
+    class Meta:
+        db_table = 'personalities'
+
 
 class User(AbstractBaseUser, PermissionsMixin):
 
@@ -22,6 +36,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     district = models.ForeignKey(District, on_delete=models.CASCADE)
     degree = models.ForeignKey(Degree, null=True, on_delete=models.CASCADE)
+    self_personality = models.ForeignKey(Personality, related_name='self_personality', blank=True, 
+                                        null=True, on_delete=models.CASCADE)
+    target_personality = models.ForeignKey(Personality, related_name='target_personality', blank=True, 
+                                        null=True, on_delete=models.CASCADE)
+
     is_active = models.BooleanField('active', default=True)
     objects = UserManager()
 
@@ -34,7 +53,3 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         db_table = 'users'
 
-
-
-#    selfPersonality = models.ForeignKey( Personality, blank=False, on_delete=models.CASCADE )
-#    targetPersonality = models.ForeignKey( Personality, blank=True, on_delete=models.CASCADE)
