@@ -33,9 +33,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     habits = models.CharField(max_length=255, blank=True, null=True)
     register_date = models.CharField(max_length=10, null=True)
 
-
     district = models.ForeignKey(District, on_delete=models.CASCADE)
-    degree = models.ForeignKey(Degree, null=True, on_delete=models.CASCADE)
+    degree = models.ForeignKey(Degree, blank=True, null=True, on_delete=models.CASCADE)
     self_personality = models.ForeignKey(Personality, related_name='self_personality', blank=True, 
                                         null=True, on_delete=models.CASCADE)
     target_personality = models.ForeignKey(Personality, related_name='target_personality', blank=True, 

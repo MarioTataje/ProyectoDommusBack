@@ -3,8 +3,23 @@ from datetime import date
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
-from accounts.models import User
+from accounts.models import User, Personality
 from locations.models import District
+
+
+class PersonalitySerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        validated_data["register_date"] = str(date.today())
+        personality = Personality.objects.create(**validated_data)
+        return personality
+
+
+    class Meta:
+        model = Personality
+
+        fields = ('id', 'tag', 'mind', 'energy', 'nature', 'tactics', 'identity', 'register_date')
+        read_only_fields = ('register_date',)
 
 
 class UserSerializer(serializers.ModelSerializer):
