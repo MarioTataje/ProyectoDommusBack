@@ -4,6 +4,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from locations.models import District
 from studies.models import Degree
 from .managers import UserManager
+from datetime import date
 
 
 class Personality(models.Model):
@@ -19,7 +20,14 @@ class Personality(models.Model):
     def get_personality_profile(self):
         personality_profile = [self.energy, self.mind, self.nature, self.tactics, self.identity]
         return personality_profile
-
+    
+    @staticmethod
+    def get_ideal_personality(ideal_list):
+        personality = Personality(id=0, tag='Personalidad ideal', energy= ideal_list[0], mind=ideal_list[1], 
+                                  nature=ideal_list[2], tactics=ideal_list[3], identity=ideal_list[4], 
+                                  register_date=date.today())
+        return personality
+    
     class Meta:
         db_table = 'personalities'
 

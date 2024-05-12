@@ -3,10 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
-
-
-model = None
-
+from accounts.models import Personality
 
 def verify_like(sender, receiver):
     
@@ -55,7 +52,8 @@ def find_match(sender, receiver):
 
 
 def prepare_model():
-    url = 'https://raw.githubusercontent.com/MarioTataje/lhs-dataset/main/ckd.csv'
+    global model
+    url = 'https://raw.githubusercontent.com/alvaromlua/dommus-dataset/main/dataset.csv'
     data = pd.read_csv(url)
     x = data[['user_energy', 'user_mind', 'user_nature', 'user_tactics', 'user_identity']]
     y = data[['ideal_energy', 'ideal_mind', 'ideal_nature', 'ideal_tactics', 'ideal_identity']]
@@ -68,7 +66,5 @@ def prepare_model():
 
 def predict_ideal_roomate(user):
     personality_profile = user.self_personality.get_personality_profile()
-    personality_profile = np.array(personality_profile).reshape(1, -1)
-    return personality_profile
-    #ideal_profile = model.predict(personality_profile)
-    #return ideal_profile.tolist()
+    ideal_profile = model.predict([personality_profile])[0]
+    return Personality.get_ideal_personality(ideal_profile)

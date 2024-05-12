@@ -6,6 +6,5 @@ class SocialsConfig(AppConfig):
     name = 'socials'
 
     def ready(self):
-        # from .utils import prepare_model
-        # prepare_model()
-        print('holi')
+        from .utils import prepare_model
+        prepare_model()

@@ -5,7 +5,7 @@ from rest_framework.views import *
 from .serializers import MatchSerializer
 from .models import Match
 from accounts.models import User
-from accounts.serializers import UserSerializer
+from accounts.serializers import UserSerializer, PersonalitySerializer
 from .utils import verify_like, verify_dislike, predict_ideal_roomate
 
 @api_view(['POST'])
@@ -114,5 +114,6 @@ def get_ideal_roommate(request, user_id):
         raise Http404
 
     if request.method == 'GET':
-        ideal_roomate = predict_ideal_roomate(user)
-        return Response(str(ideal_roomate))
+        ideal_personality = predict_ideal_roomate(user)
+        serializer = PersonalitySerializer(ideal_personality)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
