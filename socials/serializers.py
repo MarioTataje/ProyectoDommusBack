@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Match
-from accounts.models import User
 from accounts.serializers import UserSerializer
 
 

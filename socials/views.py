@@ -5,6 +5,7 @@ from rest_framework.views import *
 from .serializers import MatchSerializer
 from .models import Match
 from accounts.models import User
+from accounts.serializers import UserSerializer
 from .utils import verify_like, verify_dislike
 
 @api_view(['POST'])
@@ -48,3 +49,58 @@ def send_dislike(request, sender_id, receiver_id):
             return Response(str(e))
         serializer = MatchSerializer(match)  
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_matches(request, user_id):
+    try:
+        User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        raise Http404
+
+    if request.method == 'GET':
+        matches = Match.objects.filter(sender_user__id=user_id, is_active=True)
+        serializer = MatchSerializer(matches, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_received_likes(request, user_id):
+    try:
+        User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        raise Http404
+
+    if request.method == 'GET':
+        matches = Match.objects.filter(receiver_user__id=user_id, is_active=False)
+        serializer = MatchSerializer(matches, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_given_likes(request, user_id):
+    try:
+        User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        raise Http404
+
+    if request.method == 'GET':
+        matches = Match.objects.filter(sender_user__id=user_id, is_active=False)
+        serializer = MatchSerializer(matches, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_profiles(request, user_id):
+    try:
+        User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        raise Http404
+
+    if request.method == 'GET':
+        sender_ids = Match.objects.filter(sender_user__id=user_id).values_list('receiver_user__id', flat=True)
+        receiver_ids = Match.objects.filter(receiver_user__id=user_id, is_active=True).values_list('sender_user_id', flat=True)
+        profiles = User.objects.exclude(id=user_id).exclude(id__in=sender_ids).exclude(id__in=receiver_ids)
+  
+        serializer = UserSerializer(profiles, many=True)
+        return Response(serializer.data)
