@@ -2,8 +2,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import *
 
-from .serializers import UserSerializer, PersonalitySerializer
-from .models import User, Personality
+from .serializers import UserSerializer, PersonalitySerializer, ContactSerializer
+from .models import User, Contact
 from locations.models import District
 
 @api_view(['POST'])
@@ -62,6 +62,7 @@ def self_personality_detail(request, user_id):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
 
+
 @api_view(['GET', 'POST'])
 def target_personality_detail(request, user_id):
     try:
@@ -82,3 +83,26 @@ def target_personality_detail(request, user_id):
             user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+
+
+@api_view(['GET', 'POST'])
+def contacts_list(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        raise Http404
+
+    if request.method == 'GET':
+        contacts = Contact.objects.filter(user__id=user_id)
+        serializer = ContactSerializer(contacts, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+
+
+

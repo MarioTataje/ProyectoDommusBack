@@ -3,7 +3,7 @@ from datetime import date
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
-from accounts.models import User, Personality
+from accounts.models import User, Personality, Contact
 from locations.models import District
 from studies.models import Degree
 
@@ -13,7 +13,6 @@ class PersonalitySerializer(serializers.ModelSerializer):
         validated_data["register_date"] = str(date.today())
         personality = Personality.objects.create(**validated_data)
         return personality
-
 
     class Meta:
         model = Personality
@@ -67,3 +66,10 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True},
         }
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = ('id', 'type', 'description', 'status')
+        read_only_fields = ('status',)

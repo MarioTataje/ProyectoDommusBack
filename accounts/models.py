@@ -16,6 +16,10 @@ class Personality(models.Model):
     register_date = models.DateField(blank=False, null=False)
     is_active = models.BooleanField('active', blank=False, null=False, default=True)
 
+    def get_personality_profile(self):
+        personality_profile = [self.energy, self.mind, self.nature, self.tactics, self.identity]
+        return personality_profile
+
     class Meta:
         db_table = 'personalities'
 
@@ -51,4 +55,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         db_table = 'users'
+
+
+class Contact(models.Model):
+
+    type = models.CharField(max_length=50, blank=False, null=False) 
+    description = models.CharField(max_length=255, blank=False, null=False)
+    status = models.BooleanField('status', blank=True, default=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'contacts'
 
