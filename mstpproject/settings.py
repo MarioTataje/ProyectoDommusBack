@@ -1,13 +1,11 @@
+import datetime
 from pathlib import Path
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'django-insecure-%x89x6$4slw%&=6g$w94!phj^bx5@@nzte=$j$q6^y)1*c&m!r'
 DEBUG = os.environ.get('DEBUG') == 'True'
-ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -16,9 +14,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core.apps.CoreConfig',
     'rest_framework',
     'corsheaders',
+    'accounts.apps.AccountsConfig',
+    'locations.apps.LocationsConfig',
+    'studies.apps.StudiesConfig',
+    'socials.apps.SocialsConfig'
 ]
 
 MIDDLEWARE = [
@@ -54,13 +55,32 @@ WSGI_APPLICATION = 'mstpproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ms-tp-project',
-        'USER': 'postgres',
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ms',
+        'USER': 'root',
+        'PASSWORD': 'Tataje#98',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
+}
+
+AUTH_USER_MODEL = 'accounts.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=30),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=20),
+    'ROTATE_REFRESH_TOKENS': False,
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -88,25 +108,15 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-CORS_ALLOWED_ORIGINS = [
-    os.environ['ALLOWED_ORIGINS'],
-]
-
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 ALLOWED_HOSTS = ['*']
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATIC_URL = '/files/'
 
-STATICFILES_DIRS = [ os.path.join(BASE_DIR, "files")]
-
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),"files")
-
-REST_FRAMEWORK = {
-    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
-}
 
 # EMAIL SETTINGS
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -119,7 +129,3 @@ EMAIL_USE_TLS = True
 
 PASSWORD_RESET_TIMEOUT = 14400
 
-AUTHENTICATION_BACKENDS = [
-    'users.authback.EmailBackend',
-    "django.contrib.auth.backends.ModelBackend",
-]

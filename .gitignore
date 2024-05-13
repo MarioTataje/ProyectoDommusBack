@@ -1,9 +1,10 @@
 # enviroments
 .env
-env/
+myenv/
 
 # Generated fiels
 files/
 
 # django
-db.sqlite3
+*.pyc
+*.pyc
