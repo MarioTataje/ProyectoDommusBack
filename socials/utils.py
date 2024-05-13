@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
-from accounts.models import Personality
+from accounts.models import Personality, User
 
 def verify_like(sender, receiver):
     
@@ -64,7 +64,34 @@ def prepare_model():
     model.fit(x_train, y_train)
 
 
-def predict_ideal_roomate(user):
-    personality_profile = user.self_personality.get_personality_profile()
+def predict_ideal_personality(user):
+    personality = user.self_personality
+    if not personality:
+        raise ValueError('No tiene personalidad registrada')
+    personality_profile = personality.get_personality_profile()
     ideal_profile = model.predict([personality_profile])[0]
     return Personality.get_ideal_personality(ideal_profile)
+
+def predict_ideal_roommates(ideal_personality):
+    margin = 0.5
+    
+    mind_min = ideal_personality.mind - margin
+    mind_max = ideal_personality.mind + margin
+    energy_min = ideal_personality.energy - margin
+    energy_max = ideal_personality.energy + margin
+    nature_min = ideal_personality.nature - margin
+    nature_max = ideal_personality.nature + margin
+    tactics_min = ideal_personality.tactics - margin
+    tactics_max = ideal_personality.tactics + margin
+    identity_min = ideal_personality.identity - margin
+    identity_max = ideal_personality.identity + margin
+
+    
+    users = User.objects.filter(
+        self_personality__mind__range=(mind_min, mind_max),
+        self_personality__energy__range=(energy_min, energy_max),
+        self_personality__nature__range=(nature_min, nature_max),
+        self_personality__tactics__range=(tactics_min, tactics_max),
+        self_personality__identity__range=(identity_min, identity_max)
+    )
+    return users

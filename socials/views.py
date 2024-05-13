@@ -6,7 +6,7 @@ from .serializers import MatchSerializer
 from .models import Match
 from accounts.models import User
 from accounts.serializers import UserSerializer, PersonalitySerializer
-from .utils import verify_like, verify_dislike, predict_ideal_roomate
+from .utils import verify_like, verify_dislike, predict_ideal_personality, predict_ideal_roommates
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -107,13 +107,33 @@ def get_profiles(request, user_id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_ideal_roommate(request, user_id):
+def get_ideal_personality(request, user_id):
     try:
         user = User.objects.get(pk=user_id)
     except User.DoesNotExist:
         raise Http404
 
     if request.method == 'GET':
-        ideal_personality = predict_ideal_roomate(user)
+        try:
+            ideal_personality = predict_ideal_personality(user)
+        except Exception as e:
+            return Response({ 'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         serializer = PersonalitySerializer(ideal_personality)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_ideal_rommates(request, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        raise Http404
+
+    if request.method == 'GET':
+        try:
+            ideal_personality = predict_ideal_personality(user)
+            ideal_roommates = predict_ideal_roommates(ideal_personality)
+        except Exception as e:
+            return Response({ 'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserSerializer(ideal_roommates, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
