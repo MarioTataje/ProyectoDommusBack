@@ -43,6 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     budget_min = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=6)
     budget_max = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=6)
     habits = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=255, blank=False, null=False)
     register_date = models.CharField(max_length=10, null=True)
 
     district = models.ForeignKey(District, on_delete=models.CASCADE)
@@ -71,6 +72,12 @@ class Contact(models.Model):
     description = models.CharField(max_length=255, blank=False, null=False)
     status = models.BooleanField('status', blank=True, default=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    @staticmethod
+    def create_contact(contact_type, description, user):
+        contact = Contact(type=contact_type, description=description, status=True, user=user)
+        contact.save()
+        return 
 
     class Meta:
         db_table = 'contacts'

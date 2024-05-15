@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import *
+from decimal import Decimal
 
 from .serializers import MatchSerializer
 from .models import Match
@@ -50,6 +51,21 @@ def send_dislike(request, sender_id, receiver_id):
         serializer = MatchSerializer(match)  
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_match(request, match_id):
+    try:
+        match = Match.objects.get(id=match_id)
+    except Match.DoesNotExist:
+        raise Http404
+    
+    if request.method == 'DELETE':
+        match.is_active = None
+        match.save()
+        return Response({'message': 'Match eliminado'}, status=status.HTTP_200_OK)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_matches(request, user_id):
@@ -93,15 +109,20 @@ def get_given_likes(request, user_id):
 @permission_classes([IsAuthenticated])
 def get_profiles(request, user_id):
     try:
-        User.objects.get(pk=user_id)
+        user = User.objects.get(pk=user_id)
     except User.DoesNotExist:
         raise Http404
 
     if request.method == 'GET':
         sender_ids = Match.objects.filter(sender_user__id=user_id).values_list('receiver_user__id', flat=True)
         receiver_ids = Match.objects.filter(receiver_user__id=user_id, is_active=True).values_list('sender_user_id', flat=True)
-        profiles = User.objects.exclude(id=user_id).exclude(id__in=sender_ids).exclude(id__in=receiver_ids)
-  
+        try:
+            budget_min = user.budget_min - Decimal('300.0')
+            budget_max = user.budget_max + Decimal('300.0')
+            profiles = User.objects.exclude(id=user_id).exclude(id__in=sender_ids).exclude(id__in=receiver_ids)
+            profiles = profiles.filter(budget_min__gte=budget_min, budget_max__lte=budget_max)
+        except Exception as e:
+            return Response(str(e))
         serializer = UserSerializer(profiles, many=True)
         return Response(serializer.data)
 
