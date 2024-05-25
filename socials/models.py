@@ -9,3 +9,15 @@ class Match(models.Model):
     is_active = models.BooleanField('active', blank=True, null=True, default=False)
     class Meta:
         db_table = 'matches'
+
+
+class Report(models.Model):
+    reporting_user = models.ForeignKey(User, blank=False, null=False, related_name='reporting_user', on_delete=models.CASCADE)
+    reported_user = models.ForeignKey(User, blank=False, null=False, related_name='reported_user', on_delete=models.CASCADE)
+    times_reported = models.IntegerField(blank=False, null=False)
+    reason = models.CharField(max_length=255, null=False)
+    description =  models.TextField(blank=False, null=False)
+    register_date = models.CharField(max_length=10, null=True)
+
+    class Meta:
+        db_table = 'reports'

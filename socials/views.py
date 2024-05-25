@@ -3,8 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import *
 from decimal import Decimal
 
-from .serializers import MatchSerializer
-from .models import Match
+from .serializers import MatchSerializer, ReportSerializer
+from .models import Match, Report
 from accounts.models import User
 from accounts.serializers import UserSerializer, PersonalitySerializer
 from .utils import verify_like, verify_dislike, predict_ideal_personality, predict_ideal_roommates
@@ -158,3 +158,53 @@ def get_ideal_rommates(request, user_id):
             return Response({ 'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserSerializer(ideal_roommates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def report_user(request, reporting_id, reported_id):
+    try:
+        reporting_user = User.objects.get(pk=reporting_id)
+    except User.DoesNotExist:
+        raise Http404
+    
+    try:
+        reported_user = User.objects.get(pk=reported_id)
+    except User.DoesNotExist:
+        raise Http404
+
+    if request.method == 'POST':
+        serializer = ReportSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(reporting_user, reported_user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_reports_by_reporting(request, reporting_id):
+    try:
+        User.objects.get(pk=reporting_id)
+    except User.DoesNotExist:
+        raise Http404
+
+    if request.method == 'GET':
+        reports = Report.objects.filter(reporting_user__id=reporting_id)
+        serializer = ReportSerializer(reports, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_reports_by_reported(request, reported_id):
+    try:
+        User.objects.get(pk=reported_id)
+    except User.DoesNotExist:
+        raise Http404
+
+    if request.method == 'GET':
+        reports = Report.objects.filter(reporting_user__id=reported_id)
+        serializer = ReportSerializer(reports, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
