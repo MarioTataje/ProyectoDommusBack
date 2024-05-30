@@ -38,7 +38,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         district = District.objects.get(id=validated_data["district_id"])
+        degree = Degree.objects.get(id=validated_data["degree_id"])
         validated_data["district"] = district
+        validated_data["degree"] = degree
         validated_data["register_date"] = str(date.today())
         user = User.objects.create(**validated_data)
         Contact.create_contact('Email', user.email, user)
