@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     description = models.TextField(blank=True, null=True)
     budget_min = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=6)
     budget_max = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=6)
-    habits = models.CharField(max_length=255, blank=True, null=True)
+    habits = models.TextField(blank=True, null=True)
     phone = models.CharField(max_length=255, blank=False, null=False)
     register_date = models.CharField(max_length=10, null=True)
 
