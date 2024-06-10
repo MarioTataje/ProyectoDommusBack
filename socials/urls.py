@@ -12,7 +12,7 @@ urlpatterns = [
     path('users/<int:user_id>/profiles/', get_profiles, name='get_profiles'),
     path('users/<int:user_id>/ideal-personality/', get_ideal_personality, name='get_ideal_personality'),
     path('users/<int:user_id>/ideal-rommates/', get_ideal_rommates, name='get_ideal_rommates'),
-    path('reporting/<int:reporting_id>/reported/<int:reported_id>/repor/', report_user, name='report_user'),
+    path('reporting/<int:reporting_id>/reported/<int:reported_id>/reports/', report_user, name='report_user'),
     path('reporting/<int:reporting_id>/reports/', get_reports_by_reporting, name='get_reports_by_reporting'),
     path('reported/<int:reported_id>/reports/', get_reports_by_reported, name='get_reports_by_reported')
 ]

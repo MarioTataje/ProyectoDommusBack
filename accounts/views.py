@@ -5,12 +5,23 @@ from rest_framework.views import *
 from .serializers import UserSerializer, PersonalitySerializer, ContactSerializer
 from .models import User, Contact
 from locations.models import District
+from studies.models import Degree, University
 
 @api_view(['POST'])
 def register_user(request):
     try:
         District.objects.get(id=request.data['district_id'])
     except District.DoesNotExist:
+        raise Http404
+    
+    try:
+        Degree.objects.get(id=request.data['degree_id'])
+    except Degree.DoesNotExist:
+        raise Http404
+    
+    try:
+        University.objects.get(id=request.data['university_id'])
+    except University.DoesNotExist:
         raise Http404
 
     if request.method == 'POST':

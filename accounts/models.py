@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from locations.models import District
-from studies.models import Degree
+from studies.models import Degree, University
 from .managers import UserManager
 from datetime import date
 
@@ -42,12 +42,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     description = models.TextField(blank=True, null=True)
     budget_min = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=6)
     budget_max = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=6)
-    habits = models.CharField(max_length=255, blank=True, null=True)
+    habits = models.TextField(blank=True, null=True)
     phone = models.CharField(max_length=255, blank=False, null=False)
     register_date = models.CharField(max_length=10, null=True)
 
     district = models.ForeignKey(District, on_delete=models.CASCADE)
     degree = models.ForeignKey(Degree, blank=True, null=True, on_delete=models.CASCADE)
+    university = models.ForeignKey(University, blank=True, null=True, on_delete=models.CASCADE)
     self_personality = models.ForeignKey(Personality, related_name='self_personality', blank=True, 
                                         null=True, on_delete=models.CASCADE)
     target_personality = models.ForeignKey(Personality, related_name='target_personality', blank=True, 

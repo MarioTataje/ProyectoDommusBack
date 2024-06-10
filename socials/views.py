@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import *
+from django.db.models import Q
 from decimal import Decimal
 
 from .serializers import MatchSerializer, ReportSerializer
@@ -75,7 +76,9 @@ def get_matches(request, user_id):
         raise Http404
 
     if request.method == 'GET':
-        matches = Match.objects.filter(sender_user__id=user_id, is_active=True)
+        matches = Match.objects.filter(
+            (Q(sender_user__id=user_id) | Q(receiver_user__id=user_id)) & Q(is_active=True)
+        )
         serializer = MatchSerializer(matches, many=True)
         return Response(serializer.data)
 
