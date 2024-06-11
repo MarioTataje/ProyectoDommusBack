@@ -57,9 +57,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ms',
-        'USER': 'root',
-        'PASSWORD': 'Tataje#98',
-        'HOST': '127.0.0.1',
+        'USER': 'adminms',
+        'PASSWORD': 'gojkip-bukboq-9Bumvo',
+        'HOST': 'ms-project.mysql.database.azure.com',
         'PORT': '3306',
     }
 }

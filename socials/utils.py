@@ -54,7 +54,7 @@ def find_match(sender, receiver):
 def prepare_model():
     global model
     url = 'https://raw.githubusercontent.com/alvaromlua/dommus-dataset/main/dataset.csv'
-    data = pd.read_csv(url)
+    data = pd.read_csv(url, delimiter=';')
     x = data[['user_energy', 'user_mind', 'user_nature', 'user_tactics', 'user_identity']]
     y = data[['ideal_energy', 'ideal_mind', 'ideal_nature', 'ideal_tactics', 'ideal_identity']]
 
