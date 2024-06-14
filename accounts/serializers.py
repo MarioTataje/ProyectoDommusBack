@@ -49,7 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         district = District.objects.get(id=validated_data["district_id"])
         degree = Degree.objects.get(id=validated_data["degree_id"])
-        university = Degree.objects.get(id=validated_data["university_id"])
+        university = University.objects.get(id=validated_data["university_id"])
         validated_data["district"] = district
         validated_data["degree"] = degree
         validated_data["university"] = university
