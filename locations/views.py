@@ -7,10 +7,12 @@ from .models import Region, Province, District
 @api_view(['GET'])
 def regions_list(request):
     if request.method == 'GET':
-        regions = Region.objects.all()
-        serializer = RegionSerializer(regions, many=True)
-        return Response(serializer.data)
-
+        try:
+            regions = Region.objects.all()
+            serializer = RegionSerializer(regions, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response(e)
 
 @api_view(['GET'])
 def list_provinces_by_region(request, region_id):
