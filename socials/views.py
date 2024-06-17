@@ -122,8 +122,9 @@ def get_profiles(request, user_id):
         try:
             budget_min = user.budget_min - Decimal('300.0')
             budget_max = user.budget_max + Decimal('300.0')
+            district_id = user.district.id 
             profiles = User.objects.exclude(id=user_id).exclude(id__in=sender_ids).exclude(id__in=receiver_ids)
-            profiles = profiles.filter(budget_min__gte=budget_min, budget_max__lte=budget_max)
+            profiles = profiles.filter(budget_min__gte=budget_min, budget_max__lte=budget_max, district__id=district_id)
         except Exception as e:
             return Response(str(e))
         serializer = UserSerializer(profiles, many=True)
