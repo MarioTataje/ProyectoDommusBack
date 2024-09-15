@@ -7,6 +7,7 @@ from decimal import Decimal
 from .serializers import MatchSerializer, ReportSerializer
 from .models import Match, Report
 from accounts.models import User
+from payments.models import UserPlan
 from accounts.serializers import UserSerializer, PersonalitySerializer
 from .utils import verify_like, verify_dislike, predict_ideal_personality, predict_ideal_roommates
 
@@ -25,11 +26,19 @@ def send_like(request, sender_id, receiver_id):
     
     if request.method == 'POST':
         try:
+            user_plan = UserPlan.objects.get(user=sender, active=True)
+            if user_plan and user_plan.frequency == 'L':
+                like_count = Match.objects.filter(sender_user=sender, is_active=True).count()
+                if like_count >= 15:
+                    return Response({'error': 'Has alcanzado el límite de 15 likes por día.'}, status=status.HTTP_400_BAD_REQUEST)
+            
             match = verify_like(sender, receiver)
+
         except Exception as e:
             return Response(str(e))
         serializer = MatchSerializer(match)        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -125,6 +134,11 @@ def get_profiles(request, user_id):
             district_id = user.district.id 
             profiles = User.objects.exclude(id=user_id).exclude(id__in=sender_ids).exclude(id__in=receiver_ids)
             profiles = profiles.filter(budget_min__gte=budget_min, budget_max__lte=budget_max, district__id=district_id)
+
+            user_plan = UserPlan.objects.get(user=user, active=True)
+            if user_plan and user_plan.frequency == 'L':
+                profiles = profiles[:15]
+
         except Exception as e:
             return Response(str(e))
         serializer = UserSerializer(profiles, many=True)
@@ -162,7 +176,6 @@ def get_ideal_rommates(request, user_id):
             return Response({ 'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserSerializer(ideal_roommates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -211,4 +224,3 @@ def get_reports_by_reported(request, reported_id):
         reports = Report.objects.filter(reporting_user__id=reported_id)
         serializer = ReportSerializer(reports, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-

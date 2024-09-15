@@ -7,4 +7,4 @@ class SocialsConfig(AppConfig):
 
     def ready(self):
         from .utils import prepare_model
-        prepare_model()
+        #prepare_model()

@@ -7,6 +7,8 @@ class Match(models.Model):
     flag_match = models.BooleanField(blank=True, null=True)
     flag_dismatch = models.BooleanField(blank=True, null=True)
     is_active = models.BooleanField('active', blank=True, null=True, default=False)
+    register_date = models.DateTimeField(null=True)
+
     class Meta:
         db_table = 'matches'
 
