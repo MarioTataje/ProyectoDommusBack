@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'locations.apps.LocationsConfig',
     'studies.apps.StudiesConfig',
-    'socials.apps.SocialsConfig'
+    'socials.apps.SocialsConfig',
+    'payments.apps.PaymentsConfig'
 ]
 
 MIDDLEWARE = [
@@ -62,10 +63,10 @@ WSGI_APPLICATION = 'mstpproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ms',
-        'USER': 'adminms',
-        'PASSWORD': 'gojkip-bukboq-9Bumvo',
-        'HOST': 'ms-project.mysql.database.azure.com',
+        'NAME': 'dommus',
+        'USER': 'dommus',
+        'PASSWORD': 'dommus#98',
+        'HOST': 'dommus2.mysql.database.azure.com',
         'PORT': '3306',
     }
 }

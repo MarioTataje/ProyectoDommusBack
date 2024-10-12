@@ -4,8 +4,10 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from accounts.models import User, Personality, Contact
+from payments.models import UserPlan
 from locations.models import District
 from studies.models import Degree, University
+from payments.serializers import UserPlanSerializer
 
 class PersonalitySerializer(serializers.ModelSerializer):
 
@@ -20,7 +22,6 @@ class PersonalitySerializer(serializers.ModelSerializer):
         fields = ('id', 'tag', 'mind', 'energy', 'nature', 'tactics', 'identity', 'register_date')
         read_only_fields = ('register_date',)
 
-
 class UserSerializer(serializers.ModelSerializer):
     district_id = serializers.IntegerField(write_only=True)
     degree_id = serializers.IntegerField(write_only=True, required=False)
@@ -29,6 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
     degree_name = serializers.SerializerMethodField('get_degree_name')
     university_name = serializers.SerializerMethodField('get_university_name')
     personality = serializers.SerializerMethodField('get_personality')
+    plan = serializers.SerializerMethodField('get_plan')
 
     @staticmethod
     def validate_password(value: str) -> str:
@@ -45,6 +47,10 @@ class UserSerializer(serializers.ModelSerializer):
     def get_personality(self, instance):
         personality = instance.self_personality
         return PersonalitySerializer(personality).data if personality else None
+    
+    def get_plan(self, instance):
+        user_plan = UserPlan.objects.get(user__id = instance.id, active=True)
+        return UserPlanSerializer(user_plan).data if user_plan else None
 
     def create(self, validated_data):
         district = District.objects.get(id=validated_data["district_id"])
@@ -57,6 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create(**validated_data)
         Contact.create_contact('Email', user.email, user)
         Contact.create_contact('WhatsApp', user.phone, user)
+        UserPlan.free_user(user)
         return user
     
     def update(self, instance, validated_data):
@@ -82,12 +89,11 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'names', 'lastnames', 'password', 'birth_date', 'genre', 'description', 
                   'birth_date', 'budget_min', 'budget_max', 'phone', 'register_date', 'habits', 
                   'district_id', 'district_name', 'degree_id', 'degree_name', 'university_id', 
-                  'university_name', 'personality')
+                  'university_name', 'personality', 'plan')
         read_only_fields = ('register_date',)
         extra_kwargs = {
             'password': {'write_only': True},
         }
-
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:

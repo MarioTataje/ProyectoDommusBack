@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from accounts.models import Personality, User
+from datetime import date
 
 def verify_like(sender, receiver):
     
@@ -20,7 +21,7 @@ def verify_like(sender, receiver):
             exist_like.is_active = True
             exist_like.save()
     else:
-        exist_like = Match.objects.create(sender_user=sender, receiver_user=receiver)
+        exist_like = Match.objects.create(sender_user=sender, receiver_user=receiver, register_date=date.today())
     return exist_like
     
 
@@ -39,7 +40,7 @@ def verify_dislike(sender, receiver):
             exist_dislike.save()
     else:
         exist_dislike = Match.objects.create(sender_user=sender, receiver_user=receiver, 
-                                            flag_match=False, flag_dismatch=True)
+                                            flag_match=False, flag_dismatch=True, register_date=date.today())
     return exist_dislike
     
 
