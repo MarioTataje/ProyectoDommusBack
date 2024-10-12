@@ -9,7 +9,7 @@ from .models import Match, Report
 from accounts.models import User
 from payments.models import UserPlan
 from accounts.serializers import UserSerializer, PersonalitySerializer
-from .utils import verify_like, verify_dislike, predict_ideal_personality, predict_ideal_roommates
+from .utils import verify_like, verify_dislike, predict_ideal_personality, predict_ideal_roommates, filtrar_ideal_roommates
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -160,7 +160,7 @@ def get_ideal_personality(request, user_id):
         serializer = PersonalitySerializer(ideal_personality)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def get_ideal_rommates(request, user_id):
     try:
@@ -168,10 +168,12 @@ def get_ideal_rommates(request, user_id):
     except User.DoesNotExist:
         raise Http404
 
-    if request.method == 'GET':
+    if request.method == 'POST':
         try:
             ideal_personality = predict_ideal_personality(user)
             ideal_roommates = predict_ideal_roommates(ideal_personality)
+            if request.data and bool(request.data):
+                filtrar_ideal_roommates(request.data)
         except Exception as e:
             return Response({ 'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserSerializer(ideal_roommates, many=True)

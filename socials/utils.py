@@ -103,3 +103,7 @@ def calculate_compatibility(user_personality, ideal_personality):
     compatibility = (1 - (total_diff / max_diff)) * 100
         
     return compatibility
+
+def filtrar_ideal_roommates(ideal_roommates):
+    print('holi')
+    return 1
