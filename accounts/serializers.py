@@ -26,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
     district_id = serializers.IntegerField(write_only=True)
     degree_id = serializers.IntegerField(write_only=True, required=False)
     university_id = serializers.IntegerField(write_only=True, required=False)
+    compatibility = serializers.IntegerField(read_only=True)
     district_name = serializers.CharField(source='district.name', read_only=True)
     degree_name = serializers.SerializerMethodField('get_degree_name')
     university_name = serializers.SerializerMethodField('get_university_name')
@@ -89,7 +90,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'names', 'lastnames', 'password', 'birth_date', 'genre', 'description', 
                   'birth_date', 'budget_min', 'budget_max', 'phone', 'register_date', 'habits', 
                   'district_id', 'district_name', 'degree_id', 'degree_name', 'university_id', 
-                  'university_name', 'personality', 'plan')
+                  'university_name', 'personality', 'plan', 'compatibility')
         read_only_fields = ('register_date',)
         extra_kwargs = {
             'password': {'write_only': True},

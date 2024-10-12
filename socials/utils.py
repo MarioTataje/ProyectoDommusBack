@@ -75,24 +75,31 @@ def predict_ideal_personality(user):
 
 def predict_ideal_roommates(ideal_personality):
     margin = 0.5
-    
-    mind_min = ideal_personality.mind - margin
-    mind_max = ideal_personality.mind + margin
-    energy_min = ideal_personality.energy - margin
-    energy_max = ideal_personality.energy + margin
-    nature_min = ideal_personality.nature - margin
-    nature_max = ideal_personality.nature + margin
-    tactics_min = ideal_personality.tactics - margin
-    tactics_max = ideal_personality.tactics + margin
-    identity_min = ideal_personality.identity - margin
-    identity_max = ideal_personality.identity + margin
+    attributes = ['mind', 'energy', 'nature', 'tactics']
+    filters = {
+        f'self_personality__{attr}__range': (
+            getattr(ideal_personality, attr) - margin,
+            getattr(ideal_personality, attr) + margin
+        )
+        for attr in attributes
+    }
 
+    users = User.objects.filter(**filters)
+
+    for user in users:
+        user.compatibility = calculate_compatibility(user.self_personality, ideal_personality)
     
-    users = User.objects.filter(
-        self_personality__mind__range=(mind_min, mind_max),
-        self_personality__energy__range=(energy_min, energy_max),
-        self_personality__nature__range=(nature_min, nature_max),
-        self_personality__tactics__range=(tactics_min, tactics_max),
-        self_personality__identity__range=(identity_min, identity_max)
-    )
     return users
+
+
+def calculate_compatibility(user_personality, ideal_personality):
+    attributes = ['mind', 'energy', 'nature', 'tactics']
+    
+    total_diff = sum(
+        abs(float(getattr(user_personality, attr)) - float(getattr(ideal_personality, attr)))
+        for attr in attributes
+    )
+    max_diff = len(attributes)    
+    compatibility = (1 - (total_diff / max_diff)) * 100
+        
+    return compatibility
