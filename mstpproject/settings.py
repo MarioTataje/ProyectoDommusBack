@@ -63,10 +63,10 @@ WSGI_APPLICATION = 'mstpproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ms',
-        'USER': 'root',
-        'PASSWORD': 'Tataje#98',
-        'HOST': '127.0.0.1',
+        'NAME': 'dommus',
+        'USER': 'dommus',
+        'PASSWORD': 'dommus#98',
+        'HOST': 'dommus2.mysql.database.azure.com',
         'PORT': '3306',
     }
 }
