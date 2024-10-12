@@ -173,7 +173,7 @@ def get_ideal_rommates(request, user_id):
             ideal_personality = predict_ideal_personality(user)
             ideal_roommates = predict_ideal_roommates(ideal_personality)
             if request.data and bool(request.data):
-                filtrar_ideal_roommates(request.data)
+                ideal_roommates = filtrar_ideal_roommates(ideal_roommates, request.data)
         except Exception as e:
             return Response({ 'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserSerializer(ideal_roommates, many=True)

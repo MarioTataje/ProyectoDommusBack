@@ -4,7 +4,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from accounts.models import Personality, User
-from datetime import date
+from datetime import date, datetime
+from django.db.models import F, ExpressionWrapper, fields
+
 
 def verify_like(sender, receiver):
     
@@ -104,6 +106,29 @@ def calculate_compatibility(user_personality, ideal_personality):
         
     return compatibility
 
-def filtrar_ideal_roommates(ideal_roommates):
-    print('holi')
-    return 1
+def filtrar_ideal_roommates(ideal_roommates, filters):
+    sex = filters.get('sex', None)
+    age_min = filters.get('age_min', None)
+    age_max = filters.get('age_max', None)
+    university_id = filters.get('university_id', None)
+
+    if sex is not None:
+        ideal_roommates = ideal_roommates.filter(genre=sex)
+
+    today = datetime.today().date()
+    age_expression = ExpressionWrapper(
+        today.year - F('birth_date__year'),
+        output_field=fields.IntegerField()
+    )
+
+    if age_min is not None:
+        ideal_roommates = ideal_roommates.annotate(age=age_expression).filter(age__gte=age_min)
+        print(list(ideal_roommates))
+
+    if age_max is not None:
+        ideal_roommates = ideal_roommates.annotate(age=age_expression).filter(age__lte=age_max)
+
+    if university_id is not None:
+        ideal_roommates = ideal_roommates.filter(university__id=university_id)
+
+    return ideal_roommates
