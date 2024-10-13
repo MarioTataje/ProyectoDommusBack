@@ -87,9 +87,6 @@ def predict_ideal_roommates(ideal_personality):
     }
 
     users = User.objects.filter(**filters)
-
-    for user in users:
-        user.compatibility = calculate_compatibility(user.self_personality, ideal_personality)
     
     return users
 
@@ -123,7 +120,6 @@ def filtrar_ideal_roommates(ideal_roommates, filters):
 
     if age_min is not None:
         ideal_roommates = ideal_roommates.annotate(age=age_expression).filter(age__gte=age_min)
-        print(list(ideal_roommates))
 
     if age_max is not None:
         ideal_roommates = ideal_roommates.annotate(age=age_expression).filter(age__lte=age_max)
