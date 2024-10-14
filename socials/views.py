@@ -169,9 +169,12 @@ def get_ideal_rommates(request, user_id):
         raise Http404
 
     if request.method == 'POST':
+        sender_ids = Match.objects.filter(sender_user__id=user_id).values_list('receiver_user__id', flat=True)
+        receiver_ids = Match.objects.filter(receiver_user__id=user_id, is_active=True).values_list('sender_user_id', flat=True)
+
         try:
             ideal_personality = predict_ideal_personality(user)
-            ideal_roommates = predict_ideal_roommates(ideal_personality)
+            ideal_roommates = predict_ideal_roommates(ideal_personality, sender_ids, receiver_ids, user_id)
             if request.data and bool(request.data):
                 ideal_roommates = filtrar_ideal_roommates(ideal_roommates, request.data)
                 

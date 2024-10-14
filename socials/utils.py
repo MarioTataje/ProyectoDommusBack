@@ -75,7 +75,7 @@ def predict_ideal_personality(user):
     ideal_profile = model.predict([personality_profile])[0]
     return Personality.get_ideal_personality(ideal_profile)
 
-def predict_ideal_roommates(ideal_personality):
+def predict_ideal_roommates(ideal_personality, sender_ids, receiver_ids, user_id):
     margin = 0.5
     attributes = ['mind', 'energy', 'nature', 'tactics']
     filters = {
@@ -87,7 +87,8 @@ def predict_ideal_roommates(ideal_personality):
     }
 
     users = User.objects.filter(**filters)
-    
+    users = users.exclude(id=user_id).exclude(id__in=sender_ids).exclude(id__in=receiver_ids)
+
     return users
 
 
