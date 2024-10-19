@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import register_user, user_detail, self_personality_detail, target_personality_detail, contacts_list
+from .views import register_user, user_detail, self_personality_detail, target_personality_detail, contacts_list, verify_mail
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -14,5 +14,6 @@ urlpatterns = [
     path('users/<int:user_id>/', user_detail, name='user_detail'),
     path('users/<int:user_id>/self-personalities/', self_personality_detail, name='self_personality_detail'),
     path('users/<int:user_id>/target-personalities/', target_personality_detail, name='target_personality_detail'),
-    path('users/<int:user_id>/contacts/', contacts_list, name='contacts_list')
+    path('users/<int:user_id>/contacts/', contacts_list, name='contacts_list'),
+    path('users/mail/', verify_mail, name='verify_mail')
 ]

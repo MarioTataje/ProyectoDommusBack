@@ -52,6 +52,20 @@ def user_detail(request, user_id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+def verify_mail(request):
+    if request.method == 'POST':
+        email = request.data.get('email', None)
+        if not email:
+            return Response({'message': 'El campo email es requerido'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+            return Response({'message': 'El email ya se encuentra asociado a un usuario'}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'message': 'Email disponible para utilizar'}, status=status.HTTP_200_OK)
+
+
 @api_view(['GET', 'POST'])
 def self_personality_detail(request, user_id):
     try:
